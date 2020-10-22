@@ -13,7 +13,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
+    "test": "tsdx test --no-cache",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
@@ -22,7 +22,6 @@
   "peerDependencies": {
     "sharp": "^0.26.0",
     "axios": "^0.20.0"
-    
   },
   "husky": {
     "hooks": {

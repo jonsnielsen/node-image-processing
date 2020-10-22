@@ -1,4 +1,4 @@
-export type ImageSize = {
+export type Breakpoint = {
   imageWidth: number;
   breakpoint: number;
 };
@@ -6,7 +6,7 @@ export type ImageSize = {
 export enum MimeType {
   Jpeg = 'image/jpeg',
   Png = 'image/png',
-  WebP = 'image/webp',
+  Webp = 'image/webp',
 }
 
 /**

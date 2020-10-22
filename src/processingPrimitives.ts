@@ -1,24 +1,26 @@
 import sharp from 'sharp';
 import { MimeType, InputImage } from './types';
 
+export type LqipOptions = {
+  /**
+   * default width is 20
+   */
+  width?: number;
+  /**
+   * if no height is provided, the height is auto
+   */
+  height?: number;
+};
+
 interface IGenerateLqip {
   inputImage: InputImage;
   mimeType: MimeType;
-  options: {
-    /**
-     * default width is 20
-     */
-    width?: number;
-    /**
-     * if no height is provided, the height is auto
-     */
-    height?: number;
-  };
+  options?: LqipOptions;
 }
 export async function generateLqip({
   inputImage,
   mimeType,
-  options: { width = 20, height },
+  options: { width, height } = { width: 20 },
 }: IGenerateLqip): Promise<string> {
   return new Promise(resolve => {
     sharp(inputImage)

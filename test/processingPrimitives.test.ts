@@ -27,7 +27,7 @@ test('generateLqip - buffer, default width', async () => {
   const lqipWidth = 15;
   const expectedheight = Math.floor(CAT_ASPECT_RATIO * lqipWidth);
 
-  const imageBuffer = await filePathToBuffer({ filePath: CAT_PATH });
+  const imageBuffer = await filePathToBuffer(CAT_PATH);
 
   const lqip = await generateLqip({
     inputImage: imageBuffer,
@@ -48,7 +48,7 @@ test('getAspectRatio - buffer input', async () => {
   const expectedAspectRatio = CAT_ASPECT_RATIO;
   const delta = 0.01; // allow for one percent uncertainty of measurement
 
-  const inputImageBuffer = await filePathToBuffer({ filePath: CAT_PATH });
+  const inputImageBuffer = await filePathToBuffer(CAT_PATH);
 
   const aspectRatio = await getAspectRatio({ inputImage: inputImageBuffer });
 

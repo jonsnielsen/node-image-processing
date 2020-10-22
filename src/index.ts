@@ -1,31 +1,27 @@
-import { InputImage } from './types';
+import {
+  Breakpoint as BreakpointType,
+  InputImage as InputImageType,
+} from './types';
+import { LqipOptions as LqipOptionsType } from './processingPrimitives';
+import { ProcessedImage as ProcessedImageType } from './processImage';
 
-interface IImageProcessing {
-  /**
-   * Either a local file path, or a Buffer
-   */
-  inputImage: InputImage;
-}
-const imageProcessing = ({ inputImage }: IImageProcessing) => {
-  /**
-   * * convert inputImage to buffer. local filepath, remote filepath or buffer.
-   *
-   * * Save image to cache
-   *
-   * * Save image to specified folder
-   *
-   * * return
-   */
-};
+export { default } from './processImage';
+export { MimeType } from './types';
+export { generateLqip, getAspectRatio } from './processingPrimitives';
+export {
+  filePathToBuffer,
+  generateSrcSet,
+  getMimeType,
+  getBasename,
+  getExtension,
+  getHash,
+  generateSizes,
+  generateImageWidths,
+} from './utils';
 
-interface IProcessImage {
-  width?: number;
-  height?: number;
-  format: 'webp' | 'jpg' | 'png';
-}
-// return the processed buffer thing to be saved in another function
-const processImage = () => {};
+export type ProcessedImage = ProcessedImageType;
+export type LqipOptions = LqipOptionsType;
+export type Breakpoint = BreakpointType;
+export type InputImage = InputImageType;
 
-interface ISaveImage {}
-const saveImage = () => {};
-export default imageProcessing;
+// export { LqipOptions, Breakpoint, InputImage, MimeType }
