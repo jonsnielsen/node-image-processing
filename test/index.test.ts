@@ -28,6 +28,6 @@ test('processImage', async () => {
     withLqip: true,
     breakpoints,
   });
-  console.log({ imageResult });
+
   expect(true).toBe(true);
 });

@@ -4,3 +4,4 @@ node_modules
 dist
 .github
 testDist
+scripts/dev.env.js

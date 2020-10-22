@@ -1,5 +1,13 @@
 # node-image-processing
 A library for automatically generating optimized images at various image sizes. The main function returns the relevant data, such as `srcSet`, `sizes`, `lqip`, so they can be used for responsive optimized images in the browser.
+
+## Getting started
+Install the following peer dependencies:
+```
+"axios": "^0.20.0",
+"sharp": "^0.26.0"
+```
+
 ## Commands
 
 ```bash

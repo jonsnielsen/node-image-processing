@@ -1,5 +1,7 @@
 {
   "version": "0.1.0",
+  "name": "node-image-processing",
+  "author": "Jonathan Sparvath",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -7,11 +9,16 @@
     "dist",
     "src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsparvath/node-image-processing"
+  },
   "engines": {
     "node": ">=10"
   },
   "scripts": {
     "start": "tsdx watch",
+    "dev": "node ./scripts/dev.js",
     "build": "tsdx build",
     "test": "tsdx test --no-cache",
     "lint": "tsdx lint",
@@ -20,8 +27,8 @@
     "analyze": "size-limit --why"
   },
   "peerDependencies": {
-    "sharp": "^0.26.0",
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "sharp": "^0.26.0"
   },
   "husky": {
     "hooks": {
@@ -34,8 +41,6 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "node-image-processing-tsdx",
-  "author": "Jonathan Sparvath",
   "module": "dist/node-image-processing-tsdx.esm.js",
   "size-limit": [
     {
@@ -51,8 +56,11 @@
     "@size-limit/preset-small-lib": "^4.6.0",
     "@types/sharp": "^0.26.0",
     "axios": "^0.20.0",
+    "chokidar": "^3.4.3",
+    "fs-extra": "^9.0.1",
     "husky": "^4.3.0",
     "image-size": "^0.9.1",
+    "rimraf": "^3.0.2",
     "sharp": "^0.26.2",
     "size-limit": "^4.6.0",
     "tsdx": "^0.14.1",
