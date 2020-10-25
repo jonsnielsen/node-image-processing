@@ -3,8 +3,8 @@ const chokidar = require('chokidar');
 const rimraf = require('rimraf');
 const { DESTINATION_DIRECTORY } = require('./dev.env');
 
-const WATCH_GLOB = './src/**/*';
-const SOURCE_DIRECTORY = 'src/';
+const WATCH_GLOB = './dist/**/*';
+const SOURCE_DIRECTORY = 'dist/';
 
 rimraf.sync(DESTINATION_DIRECTORY);
 

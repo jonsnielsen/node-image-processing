@@ -3,7 +3,10 @@ import {
   InputImage as InputImageType,
 } from './types';
 import { LqipOptions as LqipOptionsType } from './processingPrimitives';
-import { ProcessedImage as ProcessedImageType } from './processImage';
+import {
+  ProcessedImage as ProcessedImageType,
+  IProcessImage as IProcessImageInterface,
+} from './processImage';
 
 export { default } from './processImage';
 export { MimeType } from './types';
@@ -23,5 +26,4 @@ export type ProcessedImage = ProcessedImageType;
 export type LqipOptions = LqipOptionsType;
 export type Breakpoint = BreakpointType;
 export type InputImage = InputImageType;
-
-// export { LqipOptions, Breakpoint, InputImage, MimeType }
+export type IProcessImage = IProcessImageInterface;

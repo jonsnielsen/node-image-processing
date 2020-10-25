@@ -27,7 +27,7 @@ export type ProcessedImage = {
   lqip?: string;
 };
 
-interface IImageProcessing {
+export interface IProcessImage {
   /**
    * an absolute file path - local or remote
    */
@@ -58,7 +58,7 @@ const processImage = async ({
   orgOptions,
   dir,
   publicDir,
-}: IImageProcessing): Promise<ProcessedImage> => {
+}: IProcessImage): Promise<ProcessedImage> => {
   const imageBuffer = await filePathToBuffer(imageUrl);
 
   // get hash of the input image that will be used as cache key and as folder name
@@ -93,14 +93,6 @@ const processImage = async ({
       })
     : undefined;
 
-  if (withWebp) {
-    await sharp(imageBuffer)
-      .toFormat('webp', webpOptions)
-      .resize({ width: allImageWidths[allImageWidths.length - 1] })
-      .toFile(`${imageFileDir}/${imageName}.webp`);
-  }
-  const webpSrc = !withWebp ? undefined : `${imagePublicDir}/${imageName}.webp`;
-
   const webpSources = !withWebp
     ? undefined
     : await Promise.all(
@@ -117,12 +109,6 @@ const processImage = async ({
         })
       );
 
-  await sharp(imageBuffer)
-    .toFormat(imageExtension, webpOptions)
-    .resize({ width: allImageWidths[allImageWidths.length - 1] })
-    .toFile(`${imageFileDir}/${imageName}.${imageExtension}`);
-  const orgSrc = `${imagePublicDir}/${imageName}.${imageExtension}`;
-
   const orgSources = await Promise.all(
     allImageWidths.map(async imageWidth => {
       const savedImagePath = `${imageFileDir}/${imageName}-${imageWidth}.${imageExtension}`;
@@ -136,6 +122,14 @@ const processImage = async ({
       return src;
     })
   );
+
+  // Make the defauls src the same as the largest image generated
+  const webpSrc = `${imagePublicDir}/${imageName}-${
+    allImageWidths[allImageWidths.length - 1]
+  }.webp`;
+  const orgSrc = `${imagePublicDir}/${imageName}-${
+    allImageWidths[allImageWidths.length - 1]
+  }.${imageExtension}`;
 
   const sizes = generateSizes(breakpoints);
 
