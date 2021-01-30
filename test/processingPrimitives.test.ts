@@ -65,3 +65,5 @@ test('getAspectRatio - local filepath input', async () => {
   expect(aspectRatio).toBeGreaterThan(expectedAspectRatio - delta);
   expect(aspectRatio).toBeLessThan(expectedAspectRatio + delta);
 });
+
+test('getExtension', async () => {});

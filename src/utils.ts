@@ -74,8 +74,15 @@ export const getBasename = (url: string) => {
   return result;
 };
 
+/**
+ * get the extensios of a url without the dot (.). Eg https://some.com/image.png returns `png`
+ */
 export const getExtension = (url: string) => {
-  const result = path.extname(url).slice(1);
+  const result = path
+    .extname(url)
+    .slice(1)
+    .split('?')[0];
+  console.log({ result });
   return result;
 };
 

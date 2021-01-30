@@ -48,7 +48,7 @@ export interface IProcessImage {
   publicDir: string;
 }
 
-const processImage = async ({
+export async function processImage({
   imageUrl,
   breakpoints,
   withWebp,
@@ -58,7 +58,7 @@ const processImage = async ({
   orgOptions,
   dir,
   publicDir,
-}: IProcessImage): Promise<ProcessedImage> => {
+}: IProcessImage): Promise<ProcessedImage> {
   const imageBuffer = await filePathToBuffer(imageUrl);
 
   // get hash of the input image that will be used as cache key and as folder name
@@ -142,6 +142,4 @@ const processImage = async ({
     aspectRatio,
     sizes,
   };
-};
-
-export default processImage;
+}

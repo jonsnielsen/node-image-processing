@@ -1,4 +1,4 @@
-import processImage from '../src/index';
+import { processImage } from '../src/index';
 import { Breakpoint } from '../src/types';
 import { CAT_PATH } from './globals';
 

@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { MimeType, InputImage } from './types';
+import { filePathToBuffer } from './utils';
 
 export type LqipOptions = {
   /**
@@ -12,7 +13,7 @@ export type LqipOptions = {
   height?: number;
 };
 
-interface IGenerateLqip {
+export interface IGenerateLqip {
   inputImage: InputImage;
   mimeType: MimeType;
   options?: LqipOptions;
@@ -22,8 +23,13 @@ export async function generateLqip({
   mimeType,
   options: { width, height } = { width: 20 },
 }: IGenerateLqip): Promise<string> {
+  const input =
+    typeof inputImage === 'string'
+      ? await filePathToBuffer(inputImage)
+      : inputImage;
+
   return new Promise(resolve => {
-    sharp(inputImage)
+    sharp(input)
       .resize({ width, height })
       .toBuffer()
       .then(result => {
@@ -33,11 +39,16 @@ export async function generateLqip({
   });
 }
 
-interface IGetAspectRatio {
+export interface IGetAspectRatio {
   inputImage: InputImage;
 }
 export async function getAspectRatio({ inputImage }: IGetAspectRatio) {
-  const { width, height } = await sharp(inputImage).metadata();
+  const input =
+    typeof inputImage === 'string'
+      ? await filePathToBuffer(inputImage)
+      : inputImage;
+
+  const { width, height } = await sharp(input).metadata();
 
   if (width === undefined || height === undefined) {
     throw new Error(`Couldn't read width or height from the input`);

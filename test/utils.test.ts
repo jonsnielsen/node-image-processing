@@ -124,15 +124,19 @@ test('getExtension', () => {
   const localUrl =
     '/Users/jsparvath/Documents/programming/npm-packages/node-image-processing-tsdx/test/assets/localUrl.jpg';
   const remoteUrl = 'https://test.com/images/remoteUrl.png';
+  const withQueryParams = 'https://test.com/images/remoteUrl.png?time=1';
 
   const localUrlResult = getExtension(localUrl);
   const remoteUrlResult = getExtension(remoteUrl);
+  const withQueryParamsResult = getExtension(withQueryParams);
 
   const localUrlExpected = 'jpg';
   const remoteUrlExpected = 'png';
+  const withQueryParamsExpected = 'png';
 
   expect(localUrlResult).toBe(localUrlExpected);
   expect(remoteUrlResult).toBe(remoteUrlExpected);
+  expect(withQueryParamsResult).toBe(withQueryParamsExpected);
 });
 
 /**
