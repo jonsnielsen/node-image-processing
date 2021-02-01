@@ -1,7 +1,7 @@
 import {
   generateSizes,
   filePathToBuffer,
-  generateImageWidths,
+  generateAllImageInfo,
   getHash,
   getBasename,
   getExtension,
@@ -14,45 +14,6 @@ import axios from 'axios';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-/**
- * generateImageWidths Tests
- */
-test('generateImageWidths - with multiplier and duplicated values', () => {
-  const result = generateImageWidths({
-    imageWidths: [400, 600, 800],
-    multipliers: [2],
-  });
-  const expected = [400, 600, 800, 1200, 1600];
-  expect(result).toEqual(expected);
-});
-
-test('generateImageWidths - no duplicated widths', () => {
-  const result = generateImageWidths({
-    imageWidths: [400, 600, 800],
-    multipliers: [2],
-  });
-  const expected = [400, 600, 800, 800, 1200, 1600];
-  expect(result).not.toEqual(expected);
-});
-
-test('generateImageWidths - with no multipliers', () => {
-  const result = generateImageWidths({
-    imageWidths: [400, 600, 800],
-    multipliers: [],
-  });
-  const expected = [400, 600, 800];
-  expect(result).toEqual(expected);
-});
-
-test('generateImageWidths - with 1x multiplier included (which does nothing extra)', () => {
-  const result = generateImageWidths({
-    imageWidths: [400, 600, 800],
-    multipliers: [1, 2],
-  });
-  const expected = [400, 600, 800, 1200, 1600];
-  expect(result).toEqual(expected);
-});
 
 /**
  * generateSizes Tests

@@ -1,13 +1,13 @@
 import { Breakpoint } from './types';
 import {
   filePathToBuffer,
-  generateImageWidths,
   generateSizes,
   getHash,
   getBasename,
   getExtension,
   getMimeType,
   generateSrcSet,
+  generateAllImageInfo,
 } from './utils';
 import {
   generateLqip,
@@ -59,6 +59,7 @@ export async function processImage({
   dir,
   publicDir,
 }: IProcessImage): Promise<ProcessedImage> {
+  const startTime = new Date();
   const imageBuffer = await filePathToBuffer(imageUrl);
 
   // get hash of the input image that will be used as cache key and as folder name
@@ -73,17 +74,30 @@ export async function processImage({
   const imageName = getBasename(imageUrl);
   const imageExtension = getExtension(imageUrl);
   const mimeType = getMimeType(imageExtension);
-  const aspectRatio = await getAspectRatio({ inputImage: imageBuffer });
 
-  // create directory if it doesn't already exist
-  if (!fs.existsSync(imageFileDir)) {
-    fs.mkdirSync(imageFileDir, { recursive: true });
-  }
-
-  const allImageWidths = generateImageWidths({
-    imageWidths: breakpoints.map(({ imageWidth }) => imageWidth),
-    multipliers: [2],
+  const allImageInfo = generateAllImageInfo({
+    imageWidths: breakpoints.map(breakpoint => breakpoint.imageWidth),
+    format: imageExtension,
+    formatOptions: orgOptions,
+    imageName,
+    imageFileDir,
+    imagePublicDir,
   });
+
+  const allImageInfoWebP = !withWebp
+    ? []
+    : generateAllImageInfo({
+        imageWidths: breakpoints.map(breakpoint => breakpoint.imageWidth),
+        format: 'webp',
+        formatOptions: webpOptions,
+        imageName,
+        imageFileDir,
+        imagePublicDir,
+      });
+
+  // Make the defauls src the same as the largest image generated
+  const webpSrc = allImageInfoWebP[allImageInfoWebP.length - 1].imagePath;
+  const orgSrc = allImageInfo[allImageInfo.length - 1].imagePath;
 
   const lqip = withLqip
     ? await generateLqip({
@@ -93,51 +107,71 @@ export async function processImage({
       })
     : undefined;
 
-  const webpSources = !withWebp
-    ? undefined
-    : await Promise.all(
-        allImageWidths.map(async imageWidth => {
-          const savedImagePath = `${imageFileDir}/${imageName}-${imageWidth}.webp`;
-
-          await sharp(imageBuffer)
-            .toFormat('webp', webpOptions)
-            .resize({ width: imageWidth })
-            .toFile(savedImagePath);
-
-          const src = `${imagePublicDir}/${imageName}-${imageWidth}.webp ${imageWidth}w`;
-          return src;
-        })
-      );
-
-  const orgSources = await Promise.all(
-    allImageWidths.map(async imageWidth => {
-      const savedImagePath = `${imageFileDir}/${imageName}-${imageWidth}.${imageExtension}`;
-
-      await sharp(imageBuffer)
-        .toFormat(imageExtension, orgOptions)
-        .resize({ width: imageWidth })
-        .toFile(savedImagePath);
-
-      const src = `${imagePublicDir}/${imageName}-${imageWidth}.${imageExtension} ${imageWidth}w`;
-      return src;
-    })
-  );
-
-  // Make the defauls src the same as the largest image generated
-  const webpSrc = `${imagePublicDir}/${imageName}-${
-    allImageWidths[allImageWidths.length - 1]
-  }.webp`;
-  const orgSrc = `${imagePublicDir}/${imageName}-${
-    allImageWidths[allImageWidths.length - 1]
-  }.${imageExtension}`;
-
   const sizes = generateSizes(breakpoints);
+  const srcSet = generateSrcSet(allImageInfo.map(imageInfo => imageInfo.src));
+  const srcSetWebp = withWebp
+    ? generateSrcSet(allImageInfoWebP.map(imageInfo => imageInfo.src))
+    : undefined;
+
+  const aspectRatio = await getAspectRatio({ inputImage: imageBuffer });
+
+  // check if all of the paths exist
+  let isAllImagesCached = allImageInfo.every(imageInfo =>
+    fs.existsSync(imageInfo.imagePath)
+  );
+  isAllImagesCached =
+    !withWebp || !isAllImagesCached
+      ? isAllImagesCached
+      : allImageInfoWebP.every(imageInfo => fs.existsSync(imageInfo.imagePath));
+
+  if (isAllImagesCached) {
+    const endTime = new Date();
+    console.log(
+      `Skipping image: ${imageName} since it is already generated. Total elapsed time ${endTime.getTime() -
+        startTime.getTime()}ms of ${imageUrl}`
+    );
+  } else {
+    // create directory
+    if (!fs.existsSync(imageFileDir)) {
+      fs.mkdirSync(imageFileDir, { recursive: true });
+    }
+
+    // Generate images in original file extension
+    await Promise.all(
+      allImageInfo.map(
+        async ({ imagePath, format, imageWidth, formatOptions }) => {
+          await sharp(imageBuffer)
+            .toFormat(format, formatOptions)
+            .resize({ width: imageWidth })
+            .toFile(imagePath);
+        }
+      )
+    );
+
+    await Promise.all(
+      allImageInfoWebP.map(
+        async ({ imagePath, format, imageWidth, formatOptions }) => {
+          await sharp(imageBuffer)
+            .toFormat(format, formatOptions)
+            .resize({ width: imageWidth })
+            .toFile(imagePath);
+        }
+      )
+    );
+
+    const endTime = new Date();
+    console.log(
+      `Generated ${allImageInfo.length +
+        allImageInfoWebP.length} versions, in ${endTime.getTime() -
+        startTime.getTime()}ms of ${imageUrl}`
+    );
+  }
 
   return {
     src: orgSrc,
-    srcSet: generateSrcSet(orgSources),
+    srcSet,
     srcWebp: webpSrc,
-    srcSetWebp: webpSources && generateSrcSet(webpSources),
+    srcSetWebp,
     lqip,
     aspectRatio,
     sizes,

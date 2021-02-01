@@ -1,31 +1,9 @@
-import { Breakpoint, MimeType } from './types';
+import { ImageInfo, Breakpoint, MimeType } from './types';
 import * as crypto from 'crypto';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-
-interface IGenerateImageWidths {
-  imageWidths: number[];
-  multipliers: number[];
-}
-
-export function generateImageWidths({
-  imageWidths,
-  multipliers,
-}: IGenerateImageWidths): number[] {
-  const generatedImageWidths = imageWidths.reduce((acc, imageWidth) => {
-    acc.add(imageWidth);
-    multipliers.forEach(multiplier => {
-      acc.add(imageWidth * multiplier);
-    });
-    return acc;
-  }, new Set<number>());
-
-  let result = Array.from(generatedImageWidths);
-  result.sort((a, b) => a - b);
-
-  return result;
-}
+import { WebpOptions, JpegOptions, PngOptions } from 'sharp';
 
 /**
  * Generates a string to be used as the `sizes` attribute in the `source` element.
@@ -38,11 +16,6 @@ export function generateSizes(breakpoints: Breakpoint[]): string {
       return `${imageWidthPercent}vw`;
     }
     return `(max-width: ${breakpoint}px) ${imageWidthPercent}vw`;
-
-    // //  ? `, ${imageWidth}px` : '';
-    // const fallbackSize =
-    //   index === breakpoints.length - 1 ? `, ${imageWidth}px` : '';
-    // return `(max-width: ${breakpoint}px) ${imageWidthPercent}vw` + fallbackSize;
   });
 
   const result = sizes.join(', ');
@@ -82,7 +55,6 @@ export const getExtension = (url: string) => {
     .extname(url)
     .slice(1)
     .split('?')[0];
-  console.log({ result });
   return result;
 };
 
@@ -101,6 +73,30 @@ export const getMimeType = (extension: string) => {
       );
   }
 };
+
+interface IGenerateAllImageInfo {
+  imageWidths: number[];
+  format: string;
+  formatOptions?: WebpOptions | JpegOptions | PngOptions;
+  imageName: string;
+  imagePublicDir: string;
+  imageFileDir: string;
+}
+
+export const generateAllImageInfo = ({
+  imageWidths,
+  format,
+  imageName,
+  formatOptions,
+  imagePublicDir,
+  imageFileDir,
+}: IGenerateAllImageInfo): ImageInfo[] =>
+  imageWidths.map(imageWidth => ({
+    format,
+    imagePath: `${imageFileDir}/${imageName}-${imageWidth}.${format}`,
+    imageWidth,
+    src: `${imagePublicDir}/${imageName}-${imageWidth}.${format} ${imageWidth}w`,
+  }));
 
 export const generateSrcSet = (sources: string[]) => {
   const result = sources.join(', ');
