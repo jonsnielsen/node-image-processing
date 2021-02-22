@@ -13,9 +13,13 @@ export enum MimeType {
 
 export type ImageInfo = {
   /**
-   * The src used to generate srcSet
+   * The src of the image in the public directory (without width descriptor)
    */
   src: string;
+  /**
+   * The src used to generate srcSet (width the width descriptor in the end)
+   */
+  srcSetSrc: string;
   /**
    * The path where to save the image
    */

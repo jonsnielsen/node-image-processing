@@ -28,6 +28,12 @@ test('with multiplier and duplicated values', () => {
   expect(result).toEqual(expected);
 });
 
+test('Only one breakpoint', () => {
+  const result = generateSizes([{ imageWidth: 400, breakpoint: 500 }]);
+  const expected = `80vw`;
+  expect(result).toEqual(expected);
+});
+
 /**
  * filePathToBuffer Tests
  */

@@ -9,7 +9,9 @@ import { WebpOptions, JpegOptions, PngOptions } from 'sharp';
  * Generates a string to be used as the `sizes` attribute in the `source` element.
  *
  */
+// TODO RENAME 'BREAKPOINT TO SCREENWIDTH'
 export function generateSizes(breakpoints: Breakpoint[]): string {
+  if (!breakpoints.length) return '';
   const sizes = breakpoints.map(({ breakpoint, imageWidth }, index) => {
     const imageWidthPercent = Math.ceil((imageWidth / breakpoint) * 100);
     if (index === breakpoints.length - 1) {
@@ -95,10 +97,29 @@ export const generateAllImageInfo = ({
     format,
     imagePath: `${imageFileDir}/${imageName}-${imageWidth}.${format}`,
     imageWidth,
-    src: `${imagePublicDir}/${imageName}-${imageWidth}.${format} ${imageWidth}w`,
+    src: `${imagePublicDir}/${imageName}-${imageWidth}.${format}`,
+    srcSetSrc: `${imagePublicDir}/${imageName}-${imageWidth}.${format} ${imageWidth}w`,
   }));
 
 export const generateSrcSet = (sources: string[]) => {
   const result = sources.join(', ');
   return result;
 };
+
+export function generateImageWidths(
+  imageWidths: number[],
+  multipliers: number[] = []
+): number[] {
+  const generatedImageWidths = imageWidths.reduce((acc, imageWidth) => {
+    acc.add(imageWidth);
+    multipliers.forEach(multiplier => {
+      acc.add(imageWidth * multiplier);
+    });
+    return acc;
+  }, new Set<number>());
+
+  const result = Array.from(generatedImageWidths);
+  result.sort((a, b) => a - b);
+
+  return result;
+}

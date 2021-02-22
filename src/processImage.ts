@@ -8,6 +8,7 @@ import {
   getMimeType,
   generateSrcSet,
   generateAllImageInfo,
+  generateImageWidths,
 } from './utils';
 import {
   generateLqip,
@@ -33,6 +34,7 @@ export interface IProcessImage {
    */
   imageUrl: string;
   breakpoints: Breakpoint[];
+  multipliers?: number[];
   withLqip?: boolean;
   withWebp?: boolean;
   lqipOptions?: LqipOptions;
@@ -51,6 +53,7 @@ export interface IProcessImage {
 export async function processImage({
   imageUrl,
   breakpoints,
+  multipliers = [2],
   withWebp,
   withLqip,
   lqipOptions,
@@ -59,6 +62,9 @@ export async function processImage({
   dir,
   publicDir,
 }: IProcessImage): Promise<ProcessedImage> {
+  // if (typeof window === 'undefined')
+  //   throw new Error('node-image-processing must be run in the server.');
+
   const startTime = new Date();
   const imageBuffer = await filePathToBuffer(imageUrl);
 
@@ -76,7 +82,10 @@ export async function processImage({
   const mimeType = getMimeType(imageExtension);
 
   const allImageInfo = generateAllImageInfo({
-    imageWidths: breakpoints.map(breakpoint => breakpoint.imageWidth),
+    imageWidths: generateImageWidths(
+      breakpoints.map(breakpoint => breakpoint.imageWidth),
+      multipliers
+    ),
     format: imageExtension,
     formatOptions: orgOptions,
     imageName,
@@ -95,9 +104,11 @@ export async function processImage({
         imagePublicDir,
       });
 
-  // Make the defauls src the same as the largest image generated
-  const webpSrc = allImageInfoWebP[allImageInfoWebP.length - 1].imagePath;
-  const orgSrc = allImageInfo[allImageInfo.length - 1].imagePath;
+  // Make the default src the same as the largest image generated
+  const orgSrc = allImageInfo[allImageInfo.length - 1].src;
+  const webpSrc = allImageInfoWebP.length
+    ? allImageInfoWebP[allImageInfoWebP.length - 1].src
+    : undefined;
 
   const lqip = withLqip
     ? await generateLqip({
@@ -108,9 +119,11 @@ export async function processImage({
     : undefined;
 
   const sizes = generateSizes(breakpoints);
-  const srcSet = generateSrcSet(allImageInfo.map(imageInfo => imageInfo.src));
+  const srcSet = generateSrcSet(
+    allImageInfo.map(imageInfo => imageInfo.srcSetSrc)
+  );
   const srcSetWebp = withWebp
-    ? generateSrcSet(allImageInfoWebP.map(imageInfo => imageInfo.src))
+    ? generateSrcSet(allImageInfoWebP.map(imageInfo => imageInfo.srcSetSrc))
     : undefined;
 
   const aspectRatio = await getAspectRatio({ inputImage: imageBuffer });
