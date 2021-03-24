@@ -1,5 +1,5 @@
 {
-  "version": "0.1.4",
+  "version": "0.1.10",
   "name": "node-image-processing",
   "author": "Jonathan Sparvath",
   "license": "MIT",
@@ -28,7 +28,7 @@
   },
   "peerDependencies": {
     "axios": ">=0.20.0",
-    "sharp": ">=0.26.0"
+    "sharp": ">=0.27.2"
   },
   "husky": {
     "hooks": {
@@ -54,14 +54,14 @@
   ],
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.6.0",
-    "@types/sharp": "^0.26.0",
+    "@types/sharp": "^0.27.1",
     "axios": "^0.20.0",
     "chokidar": "^3.4.3",
     "fs-extra": "^9.0.1",
     "husky": "^4.3.0",
     "image-size": "^0.9.1",
     "rimraf": "^3.0.2",
-    "sharp": "^0.26.2",
+    "sharp": "^0.27.2",
     "size-limit": "^4.6.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
