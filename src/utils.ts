@@ -1,4 +1,4 @@
-import { ImageInfo, Breakpoint, MimeType } from './types';
+import { ImageInfo, Breakpoint, MimeType, Format } from './types';
 import * as crypto from 'crypto';
 import axios from 'axios';
 import fs from 'fs';
@@ -52,15 +52,15 @@ export const getBasename = (url: string) => {
 /**
  * get the extensios of a url without the dot (.). Eg https://some.com/image.png returns `png`
  */
-export const getExtension = (url: string) => {
+export const getExtension = (url: string): Format => {
   const result = path
     .extname(url)
     .slice(1)
     .split('?')[0];
-  return result;
+  return result as Format;
 };
 
-export const getMimeType = (extension: string) => {
+export const getMimeType = (extension: Format | 'jpg') => {
   switch (extension) {
     case 'jpeg':
     case 'jpg':
@@ -78,7 +78,7 @@ export const getMimeType = (extension: string) => {
 
 interface IGenerateAllImageInfo {
   imageWidths: number[];
-  format: string;
+  format: Format;
   formatOptions?: WebpOptions | JpegOptions | PngOptions;
   imageName: string;
   imagePublicDir: string;

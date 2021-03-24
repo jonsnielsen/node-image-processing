@@ -1,4 +1,10 @@
-import { WebpOptions, JpegOptions, PngOptions } from 'sharp';
+import {
+  WebpOptions,
+  JpegOptions,
+  PngOptions,
+  FormatEnum,
+  AvailableFormatInfo,
+} from 'sharp';
 
 export type Breakpoint = {
   imageWidth: number;
@@ -10,6 +16,8 @@ export enum MimeType {
   Png = 'image/png',
   Webp = 'image/webp',
 }
+
+export type Format = keyof FormatEnum | AvailableFormatInfo;
 
 export type ImageInfo = {
   /**
@@ -24,7 +32,7 @@ export type ImageInfo = {
    * The path where to save the image
    */
   imagePath: string;
-  format: string;
+  format: Format;
   imageWidth: number;
   formatOptions?: WebpOptions | JpegOptions | PngOptions;
 };

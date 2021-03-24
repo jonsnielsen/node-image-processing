@@ -114,7 +114,7 @@ test('getMimeType', () => {
   const jpeg = 'jpeg';
   const png = 'png';
   const webp = 'webp';
-  const unknownType = 'something';
+  const unknownType: any = 'something';
 
   const resultJpg = getMimeType(jpg);
   const resultJpeg = getMimeType(jpeg);
